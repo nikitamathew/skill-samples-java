@@ -64,11 +64,8 @@ public class HelloWorldSpeechlet implements SpeechletV2 {
         //get dialog state
         DialogState dialogState = requestEnvelope.getRequest().getDialogState(); 
         if ("bookFlights".equals(intentName)) {
-        		if(dialogState == null) {
-        			log.info("Dialog state is null");
-        			return getTripPlannedResponse();
-        		}
-        		else if(dialogState.equals(DialogState.IN_PROGRESS)) {
+        		 if(!dialogState.equals(DialogState.COMPLETED)) {
+        			 log.info("dialog state is : {}", dialogState);
         			List<Directive> directives = new ArrayList<>();
         			DelegateDirective dd = new DelegateDirective();
         			directives.add(dd);
