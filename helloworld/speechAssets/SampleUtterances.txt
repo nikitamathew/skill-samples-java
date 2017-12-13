@@ -1,7 +1,5 @@
-HelloWorldIntent say hello
-HelloWorldIntent say hello world
-HelloWorldIntent hello
-HelloWorldIntent say hi
-HelloWorldIntent say hi world
-HelloWorldIntent hi
-HelloWorldIntent how are you
+makeMyTrip book me flight tickets
+makeMyTrip help me plan my trip
+makeMyTrip i want to go on a trip
+makeMyTrip please book me flights
+makeMyTrip i want to book hotels

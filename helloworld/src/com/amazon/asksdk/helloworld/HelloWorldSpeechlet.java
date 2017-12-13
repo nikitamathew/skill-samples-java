@@ -9,15 +9,22 @@
  */
 package com.amazon.asksdk.helloworld;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.amazon.speech.slu.Intent;
+import com.amazon.speech.speechlet.Directive;
 import com.amazon.speech.speechlet.IntentRequest;
+import com.amazon.speech.speechlet.IntentRequest.DialogState;
 import com.amazon.speech.speechlet.LaunchRequest;
 import com.amazon.speech.speechlet.SessionEndedRequest;
 import com.amazon.speech.speechlet.SessionStartedRequest;
 import com.amazon.speech.speechlet.SpeechletV2;
+import com.amazon.speech.speechlet.dialog.directives.DelegateDirective;
+import com.amazon.speech.speechlet.dialog.directives.DialogDirective;
 import com.amazon.speech.speechlet.SpeechletResponse;
 import com.amazon.speech.json.SpeechletRequestEnvelope;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
@@ -54,8 +61,27 @@ public class HelloWorldSpeechlet implements SpeechletV2 {
         Intent intent = request.getIntent();
         String intentName = (intent != null) ? intent.getName() : null;
 
-        if ("HelloWorldIntent".equals(intentName)) {
-            return getHelloResponse();
+        //get dialog state
+        DialogState dialogState = requestEnvelope.getRequest().getDialogState(); 
+        if ("bookFlights".equals(intentName)) {
+        		if(dialogState == null) {
+        			log.info("Dialog state is null");
+        			return getTripPlannedResponse();
+        		}
+        		else if(dialogState.equals(DialogState.IN_PROGRESS)) {
+        			List<Directive> directives = new ArrayList<>();
+        			DelegateDirective dd = new DelegateDirective();
+        			directives.add(dd);
+        			SpeechletResponse bookFlightResponse = new SpeechletResponse();
+        			bookFlightResponse.setDirectives(directives);
+        			bookFlightResponse.setNullableShouldEndSession(false);
+        			return bookFlightResponse;
+        		}
+        		else {
+        			//all required sots are filled. hence this is the goal state
+        			return getTripPlannedResponse();
+        		}
+
         } else if ("AMAZON.HelpIntent".equals(intentName)) {
             return getHelpResponse();
         } else {
@@ -63,7 +89,13 @@ public class HelloWorldSpeechlet implements SpeechletV2 {
         }
     }
 
-    @Override
+    private SpeechletResponse getTripPlannedResponse() {
+		log.info(" in getTripPlannedResponse");
+		PlainTextOutputSpeech outputSpeech = getPlainTextOutputSpeech("Yay! Trip is planned!");
+		return SpeechletResponse.newTellResponse(outputSpeech);
+	}
+
+	@Override
     public void onSessionEnded(SpeechletRequestEnvelope<SessionEndedRequest> requestEnvelope) {
         log.info("onSessionEnded requestId={}, sessionId={}", requestEnvelope.getRequest().getRequestId(),
                 requestEnvelope.getSession().getSessionId());
@@ -76,8 +108,8 @@ public class HelloWorldSpeechlet implements SpeechletV2 {
      * @return SpeechletResponse spoken and visual response for the given intent
      */
     private SpeechletResponse getWelcomeResponse() {
-        String speechText = "Welcome to the Alexa Skills Kit, you can say hello";
-        return getAskResponse("HelloWorld", speechText);
+        String speechText = "Welcome to make my trip! I can help you book your flights and hotel!";
+        return getAskResponse("Make my trip", speechText);
     }
 
     /**
