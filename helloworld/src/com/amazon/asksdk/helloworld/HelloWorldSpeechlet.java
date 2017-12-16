@@ -24,7 +24,6 @@ import com.amazon.speech.speechlet.SessionEndedRequest;
 import com.amazon.speech.speechlet.SessionStartedRequest;
 import com.amazon.speech.speechlet.SpeechletV2;
 import com.amazon.speech.speechlet.dialog.directives.DelegateDirective;
-import com.amazon.speech.speechlet.dialog.directives.DialogDirective;
 import com.amazon.speech.speechlet.SpeechletResponse;
 import com.amazon.speech.json.SpeechletRequestEnvelope;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
@@ -82,7 +81,7 @@ public class HelloWorldSpeechlet implements SpeechletV2 {
         } else if ("AMAZON.HelpIntent".equals(intentName)) {
             return getHelpResponse();
         } else {
-            return getAskResponse("HelloWorld", "This is unsupported.  Please try something else.");
+            return getAskResponse("Oops!", "This is unsupported.  Please try something else.");
         }
     }
 
